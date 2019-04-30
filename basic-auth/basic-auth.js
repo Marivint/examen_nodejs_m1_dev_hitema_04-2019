@@ -1,28 +1,25 @@
 const crypto = require('crypto');
-
+const hash = crypto.createHash('sha1');
+const hpassword = hash.write('password');
+hash.end();
+ 
 function sha1Encode(data) {
-    // To be implemented!
+    let hash = crypto.createHash('sha1');
+     let response = hash.write(data);
+     hash.end();
+     return response;
 }
-
+ 
 module.exports.digestAuth = (request, response, next) => {
-    // const authorization = request.headers.authorization;  // 'Basic xxxx'
-    // console.log('authorization ', authorization);
-    // const encoded = authorization.replace('Basic ', '');
-    // const decoded = Buffer.from(encoded, 'base64').toString('utf8');
-    
-    // const [login, password] = decoded.split(':');
-    // if (login === 'node' && password === 'password') return next();
-    // response.sendStatus(401);
-}
-
-
-// module.exports.basicAuth = (request, response, next) => {
-//     const authorization = request.headers.authorization;  // 'Basic xxxx'
-//     console.log('authorization ', authorization);
-//     const encoded = authorization.replace('Basic ', '');
-//     const decoded = Buffer.from(encoded, 'base64').toString('utf8');
-    
-//     const [login, password] = decoded.split(':');
-//     if (login === 'node' && password === 'password') return next();
-//     response.sendStatus(401);
-// }
+    const authorization = request.headers.authorization;
+    const encoded = authorization.replace('Basic ', '');
+    const decoded = Buffer.from(encoded, 'base64').toString('utf8');
+ 
+    const [login, password] = decoded.split(':');
+    let pwd = sha1Encode(password);
+    if (login === 'node' && pwd === hpassword) {
+        return next();
+    }else {
+        response.sendStatus(401);
+    }
+};
