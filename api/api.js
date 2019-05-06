@@ -1,13 +1,37 @@
 // Express
 const express = require('express');
+<<<<<<< HEAD
 
 // Module People Service
+=======
+const bodyParser = require('body-parser');
+>>>>>>> corrections
 const PeopleService = require('./people-service');
+const HttpStatus = require('http-status-codes');
+
 const peopleService = new PeopleService();
 
 // APP
 const app = express();
+const routeur = express.Router();
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use('/api/v1', routeur);
+
+routeur.put('/people/:id', (request, response) => {
+    const id = parseInt(request.params.id, 10);
+    const people = request.body;
+
+    try  {
+        peopleService.updatePeople(id, people);
+        response.sendStatus(HttpStatus.OK);
+    } catch (error) {
+        response.sendStatus(HttpStatus.NOT_FOUND);
+    }
+});
+
+<<<<<<< HEAD
 // V1
 // const v1 = express.Router();
 
@@ -43,5 +67,11 @@ app.put('/api/v1/people/:id', async (request, response) => {
     }
 });
 
+=======
+routeur.get('/people', (request, response) => {
+    const filters = request.query;
+    response.send(peopleService.getPeople(filters));
+});
+>>>>>>> corrections
 
 module.exports = app;
